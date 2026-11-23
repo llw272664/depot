@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>仓 · depot</title>
+<meta name="description" content="一个放图片和零碎东西的地方。">
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f6f4ef'/%3E%3Cpath d='M8 8h16v16H8z' fill='none' stroke='%2317161a' stroke-width='2'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="brand">
+    <span class="mark">仓</span>
+    <span class="latin">DEPOT</span>
+  </div>
+
+  <nav class="nav">
+    <a href="#gallery">图库</a>
+    <a href="#drop">上传</a>
+    <a href="#about">说明</a>
+    <button type="button" class="linkish" id="authBtn">登录</button>
+  </nav>
+
+  <div class="tally" id="tally">载入中</div>
+</header>
+
+<main>
+
+  <section class="intro">
+    <h1>把图，<br>放在自己手里。</h1>
+    <div class="intro-side">
+      <p>这里存着我随手拍的和随手截的。没有推荐算法，没有压缩水印，点开就是原图。</p>
+      <p class="meta" id="introMeta">—</p>
+    </div>
+  </section>
+
+  <section class="drop" id="drop">
+    <div class="drop-inner" id="dropZone">
+      <p class="drop-line">把图拖进来，或者 <button type="button" class="linkish" id="pickBtn">选文件</button></p>
+      <p class="drop-hint">拖入 · Ctrl+V 粘贴 · 单张 ≤ <span id="maxMb">24</span> MB · JPG PNG GIF WEBP AVIF PDF</p>
+      <input type="file" id="fileInput" multiple accept="image/*,application/pdf" hidden>
+    </div>
+
+    <form class="login" id="loginForm" hidden>
+      <label for="pw">上传需要口令</label>
+      <input type="password" id="pw" autocomplete="current-password" placeholder="口令">
+      <button type="submit">进入</button>
+      <button type="button" class="plain" id="logoutBtn" hidden>退出</button>
+    </form>
+
+    <ul class="queue" id="queue"></ul>
+  </section>
+
+  <section class="gallery-wrap" id="gallery">
+    <div class="gallery-head">
+      <h2>图库</h2>
+      <div class="tools">
+        <input type="search" id="filter" placeholder="筛选文件名  按 / 聚焦">
+      </div>
+    </div>
+    <div class="gallery" id="grid"></div>
+    <p class="empty" id="empty" hidden>还是空的。上面拖一张进来。</p>
+  </section>
+
+  <section class="about" id="about">
+    <h2>说明</h2>
+    <dl>
+      <dt>存储</dt>
+      <dd>文件存在这台小服务器的磁盘上，链接永久有效，不做外链防盗。</dd>
+      <dt>地址</dt>
+      <dd>每张图有独立短链 <code>/f/xxxxxxxx.jpg</code>，可以直接贴到别处。</dd>
+      <dt>删除</dt>
+      <dd>登录后把鼠标移到图上，点「删」即从磁盘和索引里同时移除，没有回收站。</dd>
+    </dl>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <span id="footName">仓</span>
+  <span>·</span>
+  <span>跑在 Altare 上</span>
+  <span class="spacer"></span>
+  <span id="footTime"></span>
+</footer>
+
+<div class="viewer" id="viewer" hidden>
+  <button type="button" class="viewer-close" id="viewerClose" aria-label="关闭">关闭</button>
+  <img id="viewerImg" alt="">
+  <div class="viewer-meta" id="viewerMeta"></div>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>
