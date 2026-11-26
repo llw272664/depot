@@ -19,6 +19,21 @@ if [ ! -d .git ]; then
   say "初始化 git 仓库"
 fi
 
+# 辅助脚本同步到 /root。
+# 必须放在「无变化就退出」之前，否则没有新提交的那些轮次永远不会同步。
+# 用 .new + mv 原子替换，不影响正在跑的进程。
+sync_helpers() {
+  for f in u3-backup.sh; do
+    src="$W/depot/deploy/$f"
+    [ -f "$src" ] || continue
+    if ! cmp -s "$src" "/root/$f" 2>/dev/null; then
+      cp "$src" "/root/$f.new" && mv "/root/$f.new" "/root/$f" && chmod +x "/root/$f" \
+        && say "同步 $f 到 /root"
+    fi
+  done
+}
+sync_helpers
+
 BEFORE=$(git rev-parse HEAD 2>/dev/null || echo none)
 
 if ! git fetch -q origin "$BRANCH" 2>>"$LOG"; then
@@ -67,17 +82,6 @@ if [ -d "$W/depot/bot" ] && [ -d "$W/bot" ]; then
     tmux new-session -d -s bot "cd $W/bot && set -a && . ./.env && set +a && exec node bot.js >> $W/logs/bot.log 2>&1"
     say "bot 已重启"
   fi
-fi
-
-# 辅助脚本同步到 /root（原子替换，不影响正在跑的进程）
-if [ -d "$W/depot/deploy" ]; then
-  for f in u3-backup.sh; do
-    if [ -f "$W/depot/deploy/$f" ]; then
-      cp "$W/depot/deploy/$f" "/root/$f.new" 2>/dev/null \
-        && mv "/root/$f.new" "/root/$f" \
-        && chmod +x "/root/$f"
-    fi
-  done
 fi
 
 if [ "${1:-}" != once ]; then
