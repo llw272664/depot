@@ -23,7 +23,8 @@ fi
 # 必须放在「无变化就退出」之前，否则没有新提交的那些轮次永远不会同步。
 # 用 .new + mv 原子替换，不影响正在跑的进程。
 sync_helpers() {
-  for f in u3-backup.sh; do
+  # autopull.sh 自己也同步：用 .new + mv 原子替换，当前这轮仍在读旧 inode，不受影响
+  for f in autopull.sh u3-backup.sh; do
     src="$W/depot/deploy/$f"
     [ -f "$src" ] || continue
     if ! cmp -s "$src" "/root/$f" 2>/dev/null; then
