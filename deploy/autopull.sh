@@ -69,6 +69,17 @@ if [ -d "$W/depot/bot" ] && [ -d "$W/bot" ]; then
   fi
 fi
 
+# 辅助脚本同步到 /root（原子替换，不影响正在跑的进程）
+if [ -d "$W/depot/deploy" ]; then
+  for f in u3-backup.sh; do
+    if [ -f "$W/depot/deploy/$f" ]; then
+      cp "$W/depot/deploy/$f" "/root/$f.new" 2>/dev/null \
+        && mv "/root/$f.new" "/root/$f" \
+        && chmod +x "/root/$f"
+    fi
+  done
+fi
+
 if [ "${1:-}" != once ]; then
   sleep 5
   curl -s -o /dev/null -w "本地自检 HTTP %{http_code}\n" -m 10 http://127.0.0.1:3000/ >>"$LOG" 2>&1
