@@ -53,5 +53,17 @@ TELEGRAM_TOKEN=123:abc SITE_URL=http://127.0.0.1:3000 SITE_API_KEY=xxx node bot.
 
 ## 部署
 
-线上现在跑在一台 Debian 13 沙盒里，`altr tunnel` 给公网地址，`watchdog.sh` 每 60 秒巡检、每小时级备份。
-具体的启停命令、踩过的坑写在 `DEPLOY.md`。
+线上现在跑在一台 Debian 13 沙盒里，`altr tunnel` 给公网地址，`watchdog.sh` 每 60 秒巡检、每 6 小时本地备份一次。
+
+`deploy/` 下是运维脚本：
+
+| 脚本 | 作用 |
+| --- | --- |
+| `autopull.sh` | 检查远端 `main`，有变化就 `git reset --hard` 并重启对应服务。只覆盖被跟踪的文件，`.env` / `data/` / `node_modules` 不受影响 |
+| `autopull-loop.sh` | `autopull.sh` 的常驻外壳（90 秒一轮、PID 文件单实例、`setsid` 独立于 tmux） |
+| `u3-backup.sh` | 把 `data/` + `.env` 打包推到 U3 对象存储，默认留 8 份 |
+
+推代码即上线：`git push` 之后沙盒会在一分半内自动更新并重启，不需要登进去操作。
+本地备份与 U3 备份走 `watchdog.sh` 的 6 小时周期。
+
+具体的启停命令、接口细节和踩过的坑写在 `DEPLOY.md`。
